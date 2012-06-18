@@ -57,10 +57,16 @@ class Gauss_Seidel(object):
 	
 	def solve_precision(self,X0,epsilon):
 		""" Resuelve para un X0 dado el sistema con el epsilon dado """
-		pass
+		
+		while True:
+			X1 = self.__solve(X0)
 
-	def __control_cut(self, epsilon):
-		pass
+			if self.__norm2(X1-X0) < epsilon:
+				return X1
+					
+			X0 = X1
+
+
 
 	def __norm2(self, X):
 		""" Calcula la norma 2 del vector dado """
