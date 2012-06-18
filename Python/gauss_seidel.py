@@ -34,7 +34,7 @@ class Gauss_Seidel(object):
 
 	def __get_Diag_Dom(self,A):
 		""" Transforma A en una matriz diagonalmente dominante """
-		return True
+		return True # TODO Hacer metodo para permutar! 
 
 	def __trunc(self, X):
 		""" Trunca todos los elementos de la matriz a la precision deseada"""
@@ -80,7 +80,7 @@ class Gauss_Seidel(object):
 	def __norm2(self, X):
 		""" Calcula la norma 2 del vector dado """
 		vectorX = [x for row in X.tolist() for x in row]
-		squared_norm= reduce(lambda x,y: fabs(x)**2 + fabs(y)**2, vectorX)
+		squared_norm = sum(map(lambda x: x**2, vectorX))
 		return squared_norm**0.5
 
 
