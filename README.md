@@ -11,4 +11,8 @@ Requerimientos:
 
 Fijense que para NumPy y SciPy el nombre del archivo dice en un momento python2.X, tienen que bajarse el que sea 2.7.
 
+Para acceder al interprete de python directamente tipeando python en la consola (En windows), ir a opciones avanzadas de sistema, seleccionar variables de entorno,
+el PATH, editar, y agreguen el directorio de su instalacion, supongo que será C:\Python27
+
+
 Haremos una versión de C? :D
