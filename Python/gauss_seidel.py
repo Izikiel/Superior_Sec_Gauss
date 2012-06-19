@@ -1,9 +1,5 @@
-
 from numpy import matrix, triu, tril, vectorize, diag
-from math  import fabs
-import numpy
-from numpy import matlib as mlib
-import scipy
+from math  import fabs, factorial
 
 class Gauss_Seidel(object):
 	"""Objeto que resuelve un sistema A,B,X dado con precision E for Gauss_Seidel"""
@@ -35,48 +31,32 @@ class Gauss_Seidel(object):
 	def __solve(self, X):
 		return (self.Tgs * self.__trunc(X) + self.Cgs)
 
-	def getDiagDom(mat,permutar_columnas):
+	def __transform_into_DiagDom(self,mat,permutar_columnas):
 		n = mat.shape[0]
-		mat_aux = mlib.rand(n,n)
-		copiarMatriz(mat,mat_aux)
 		row = 0
 		cant_max_permutaciones = factorial(n)
-		while(not self.__check_Diag_Dom(mat) and cant_max_permutaciones > 0):
+		while(  cant_max_permutaciones > 0 and not self.__check_Diag_Dom(mat)):
 			if(permutar_columnas):
 				mat = mat.T
-				copiarMatriz(mat,mat_aux)
-			copiarFila(mat,row,mat_aux,row+1)
-			copiarFila(mat,row+1,mat_aux,row)
+			mat[row], mat[row+1] = mat[row+1].tolist(), mat[row].tolist()
 			if(row+2 <= n-1):
 				row = row + 1
-			else: row = 0
-			copiarMatriz(mat_aux,mat)
+			else: 
+				row = 0
 			if(permutar_columnas):
 				mat = mat.T
 			cant_max_permutaciones = cant_max_permutaciones - 1
-		return mat;
+		print mat
+		return mat
 
-	def copiarFila(mat_origen,row_o,mat_destino,row_d):
-		(mat_destino[row_d]) = (mat_origen[row_o]).copy()
-		return mat_destino
-
-	def copiarMatriz(mat_origen,mat_destino):
-		for row in range(mat_origen.shape[0]):
-			copiarFila(mat_origen,row,mat_destino,row)
-	
-	def factorial(a):
-		if(a == 0):
-			return 1
-		else: 
-			return (a*factorial(a-1))
 
 	def __get_Diag_Dom(self,mat):
-		""" Transforma mat en una matriz diagonalmente dominante """
-		getDiagDom(mat,False)	#permuta filas
+		""" Consiguea a partir de mat una matriz diagonalmente dominante """
+		self.__transform_into_DiagDom(mat,False)	#permuta filas
 		if(self.__check_Diag_Dom(mat)):
 			return mat
 		else:
-			getDiagDom(mat,True)	#permuta columnas
+			self.__transform_into_DiagDom(mat,True)	#permuta columnas
 		if(self.__check_Diag_Dom(mat)):	
 			return mat
 		else: return None
@@ -113,8 +93,11 @@ class Gauss_Seidel(object):
 			print "Iteracion numero:", iterations, "valores:", [str(x[0]) for x in X1.tolist()]
 
 			if self.__norm2(X1-X0) < epsilon:
+				print
 				print "Se necesitaron", iterations, "iteraciones para llegar a la precision deseada"
+				print
 				print "Valores obtenidos:", [str(x[0]) for x in X1.tolist()]
+				print
 				return X1
 
 			X0 = X1
@@ -127,5 +110,6 @@ class Gauss_Seidel(object):
 		vectorX = [x for row in X.tolist() for x in row]
 		squared_norm = sum(map(lambda x: x**2, vectorX))
 		return squared_norm**0.5
+
 
 
