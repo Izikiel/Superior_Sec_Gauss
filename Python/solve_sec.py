@@ -13,8 +13,6 @@ class ConditionMat(object):
 		return self.cond(Mat,dimension)
 	def raiseError(self):
 		raise Exception(self.errMsg)
-		
-
 
 def clearScreen():
 	if platform is 'win32':

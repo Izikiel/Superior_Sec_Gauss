@@ -3,12 +3,9 @@ from math  import fabs, factorial
 
 
 class NotDiagDomException(Exception):
-	"""docstring for NotDiagDom"""
+	"""NotDiagDomException es una excepcion que ocurre cuando la matriz no se pudo diagonalizar dominantemente"""
 	def __init__(self):
 		Exception.__init__(self, "No se pudo conseguir una matriz diagonalmente dominante a partir de la matriz \nde coeficientes dada ")
-
-		
-
 
 class Gauss_Seidel(object):
 	"""Objeto que resuelve un sistema A,B,X dado con precision E for Gauss_Seidel"""
