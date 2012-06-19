@@ -41,7 +41,7 @@ class Gauss_Seidel(object):
 		copiarMatriz(mat,mat_aux)
 		row = 0
 		cant_max_permutaciones = factorial(n)
-		while(not __check_Diag_Dom(mat) and cant_max_permutaciones > 0):
+		while(not self.__check_Diag_Dom(mat) and cant_max_permutaciones > 0):
 			if(permutar_columnas):
 				mat = mat.T
 				copiarMatriz(mat,mat_aux)
@@ -73,11 +73,11 @@ class Gauss_Seidel(object):
 	def __get_Diag_Dom(self,mat):
 		""" Transforma mat en una matriz diagonalmente dominante """
 		getDiagDom(mat,False)	#permuta filas
-		if(__check_Diag_Dom(mat)):
+		if(self.__check_Diag_Dom(mat)):
 			return mat
 		else:
 			getDiagDom(mat,True)	#permuta columnas
-		if(__check_Diag_Dom(mat)):	
+		if(self.__check_Diag_Dom(mat)):	
 			return mat
 		else: return None
 
