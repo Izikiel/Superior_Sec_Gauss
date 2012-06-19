@@ -12,9 +12,21 @@ if __name__ == '__main__':
 
 	clearScreen()
 
-	print "SEL Resolver 1.0 "
+	print"""
+	  ______ _______ _                ______                   _                   
+	 / _____|_______|_)              (_____ \                 | |                  
+	( (____  _____   _                _____) )_____  ___  ___ | |_   _ _____  ____ 
+	 \____ \|  ___) | |              |  __  /| ___ |/___)/ _ \| | | | | ___ |/ ___)
+	 _____) ) |_____| |_____         | |  \ \| ____|___ | |_| | |\ V /| ____| |    
+	(______/|_______)_______)        |_|   |_|_____|___/ \___/ \_)\_/ |_____)_|    
+	                                                                                                                                                                          
+	"""
+
+	print "\t\t\tSEL Resolver 1.0 "
+	print
 	print "Programa de resolucion de ecuaciones lineales de sistemas cuadrados usando el metodo de Gauss Seidel matricial"
-	print "Implementado en Python 2.7 usando NumPy y SciPy"
+	print
+	print "\t\tImplementado en Python 2.7 usando NumPy y SciPy"
 	print 
 
 	while True:
@@ -106,11 +118,12 @@ if __name__ == '__main__':
 
 		print "Empezando a resolver ! :D \n"
 
-		Gauss_Seidel(A,B,trunc_precision).solve_precision(X0,epsilon)
-
-
-		answer  = raw_input("Desea ingresar otro sistema? (y/n) ")
-		
+		try:
+			Gauss_Seidel(A,B,trunc_precision).solve_precision(X0,epsilon)
+		except NotDiagDomException, e:
+			print e.message
+		finally:
+			answer  = raw_input("Desea ingresar otro sistema? (y/n) ")
 
 		if answer.lower() == 'n':
 			print "Vuelva pronto :D" 

@@ -1,6 +1,15 @@
 from numpy import matrix, triu, tril, vectorize, diag
 from math  import fabs, factorial
 
+
+class NotDiagDomException(Exception):
+	"""docstring for NotDiagDom"""
+	def __init__(self):
+		Exception.__init__(self, "No se pudo conseguir una matriz diagonalmente dominante a partir de la matriz \nde coeficientes dada ")
+
+		
+
+
 class Gauss_Seidel(object):
 	"""Objeto que resuelve un sistema A,B,X dado con precision E for Gauss_Seidel"""
 	def __init__(self, A,B, trunc_precision):
@@ -16,7 +25,7 @@ class Gauss_Seidel(object):
 		if self.__check_Diag_Dom(A) is False:
 			A = self.__get_Diag_Dom(A)
 			if A is None:
-				raise Exception("No se pudo conseguir una matriz diagonalmente dominante a partir de A")
+				raise NotDiagDomException
 
 		D_L = tril(A)
 		U = -triu(A,k=1)
@@ -46,7 +55,6 @@ class Gauss_Seidel(object):
 			if(permutar_columnas):
 				mat = mat.T
 			cant_max_permutaciones = cant_max_permutaciones - 1
-		print mat
 		return mat
 
 
