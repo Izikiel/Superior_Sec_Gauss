@@ -1,6 +1,9 @@
 
 from numpy import matrix, triu, tril, vectorize, diag
 from math  import fabs
+import numpy
+from numpy import matlib as mlib
+import scipy
 
 class Gauss_Seidel(object):
 	"""Objeto que resuelve un sistema A,B,X dado con precision E for Gauss_Seidel"""
@@ -32,9 +35,51 @@ class Gauss_Seidel(object):
 	def __solve(self, X):
 		return (self.Tgs * self.__trunc(X) + self.Cgs)
 
-	def __get_Diag_Dom(self,A):
-		""" Transforma A en una matriz diagonalmente dominante """
-		return True # TODO Hacer metodo para permutar! 
+	def getDiagDom(mat,permutar_columnas):
+		n = mat.shape[0]
+		mat_aux = mlib.rand(n,n)
+		copiarMatriz(mat,mat_aux)
+		row = 0
+		cant_max_permutaciones = factorial(n)
+		while(not __check_Diag_Dom(mat) and cant_max_permutaciones > 0):
+			if(permutar_columnas):
+				mat = mat.T
+				copiarMatriz(mat,mat_aux)
+			copiarFila(mat,row,mat_aux,row+1)
+			copiarFila(mat,row+1,mat_aux,row)
+			if(row+2 <= n-1):
+				row = row + 1
+			else: row = 0
+			copiarMatriz(mat_aux,mat)
+			if(permutar_columnas):
+				mat = mat.T
+			cant_max_permutaciones = cant_max_permutaciones - 1
+		return mat;
+
+	def copiarFila(mat_origen,row_o,mat_destino,row_d):
+		(mat_destino[row_d]) = (mat_origen[row_o]).copy()
+		return mat_destino
+
+	def copiarMatriz(mat_origen,mat_destino):
+		for row in range(mat_origen.shape[0]):
+			copiarFila(mat_origen,row,mat_destino,row)
+	
+	def factorial(a):
+		if(a == 0):
+			return 1
+		else: 
+			return (a*factorial(a-1))
+
+	def __get_Diag_Dom(self,mat):
+		""" Transforma mat en una matriz diagonalmente dominante """
+		getDiagDom(mat,False)	#permuta filas
+		if(__check_Diag_Dom(mat)):
+			return mat
+		else:
+			getDiagDom(mat,True)	#permuta columnas
+		if(__check_Diag_Dom(mat)):	
+			return mat
+		else: return None
 
 	def __trunc(self, X):
 		""" Trunca todos los elementos de la matriz a la precision deseada"""
