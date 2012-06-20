@@ -15,7 +15,7 @@ class ConditionMat(object):
 		raise Exception(self.errMsg)
 
 def clearScreen():
-	if platform is 'win32':
+	if platform == 'win32':
 		system('cls')
 	else:
 		system("clear")
@@ -79,9 +79,9 @@ if __name__ == '__main__':
 	input_msgTrunc = "#  Ingrese cantidad maxima de digitos antes de truncar: "
 	errMsgTrunc = "La cantidad ingresada no es un numero"
 
-	condSquared = ConditionMat((lambda mat,d: mat.shape[0] is not mat.shape[1]),"La matriz ingresada no es cuadrada" )
-	condDimRange = ConditionMat((lambda mat,dimension: mat.shape[0] is not dimension), "La matriz ingresada no es de la misma dimension que la dimension del sistema"  )
-	condColumn = ConditionMat((lambda mat,dimension: mat.shape[1] is not 1), "La matriz ingresada no es una matriz columna")
+	condSquared = ConditionMat((lambda mat,d: mat.shape[0] != mat.shape[1]),"La matriz ingresada no es cuadrada" )
+	condDimRange = ConditionMat((lambda mat,dimension: mat.shape[0] != dimension), "La matriz ingresada no es de la misma dimension que la dimension del sistema"  )
+	condColumn = ConditionMat((lambda mat,dimension: mat.shape[1] != 1), "La matriz ingresada no es una matriz columna")
 
 	conditionsSquared = [condSquared,condDimRange]
 	conditionsColumn = [condColumn,condDimRange]
@@ -106,8 +106,12 @@ if __name__ == '__main__':
 		print "Empezando a resolver ! :D \n"
 
 		try:
-			Gauss_Seidel(A,B,trunc_precision).solve_precision(X0,epsilon)
-
+			Xsolved, iterations = Gauss_Seidel(A,B,trunc_precision).solve_precision(X0,epsilon)
+			print
+			print "Se necesitaron", iterations, "iteraciones para llegar a la precision deseada"
+			print
+			print "Valores obtenidos:", [str(x[0]) for x in Xsolved.tolist()]
+			print
 		except NotDiagDomException, e:
 			print e.message
 

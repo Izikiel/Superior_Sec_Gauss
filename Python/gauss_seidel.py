@@ -1,5 +1,5 @@
 from numpy import matrix, triu, tril, vectorize, diag
-from math  import fabs, factorial
+from math  import fabs, factorial, trunc
 
 
 class NotDiagDomException(Exception):
@@ -13,13 +13,13 @@ class Gauss_Seidel(object):
 		"""A y B tienen que ser matrices!, A debe ser cuadrada, B una matriz columna. trunc_precision es la cantidad de digitos deseados"""
 		super(Gauss_Seidel, self).__init__()
 
-		if self.__is_Squared(A) is False:
+		if  not self.__is_Squared(A):
 			raise Exception("La matriz A no es cuadrada")
 
-		if A.shape[0] is not B.shape[0] or B.shape[1] is not 1:
+		if A.shape[0] != B.shape[0] or B.shape[1] != 1:
 			raise Exception("La matriz B no es columna de la dimension de A")
 
-		if self.__check_Diag_Dom(A) is False:
+		if  not self.__check_Diag_Dom(A):
 			A = self.__get_Diag_Dom(A)
 			if A is None:
 				raise NotDiagDomException
@@ -31,7 +31,7 @@ class Gauss_Seidel(object):
 		self.trunc_precision = trunc_precision
 
 	def __is_Squared(self,A):
-		return A.shape[0] is A.shape[1]
+		return A.shape[0] == A.shape[1]
 
 
 	def __solve(self, X):
@@ -68,24 +68,20 @@ class Gauss_Seidel(object):
 
 	def __trunc(self, X):
 		""" Trunca todos los elementos de la matriz a la precision deseada"""
-		def trunc(number, precision):
-			int_number = int(number)
-			decimals = int((number - int_number) * 10**precision)
-			return int_number + (float(decimals)/(10**precision))
+		def trunc_to_precision(number, precision):
+			return (1.0/10**precision)*trunc((number * 10**precision))
 
-		trunc_matrix = vectorize(trunc) #esta funcion es como un map pero para matrices.
+		trunc_matrix = vectorize(trunc_to_precision) #esta funcion es como un map pero para matrices.
 		return trunc_matrix(X,self.trunc_precision)
 
 
 	def __check_Diag_Dom(self,A):
-		""" Chequea si A es diagonalmente dominante """
-		rows = A.tolist()
-		D = diag(A)
-		true_rows = []
-		for x in xrange(0,len(D)):
-			res  = fabs(D[x]) >= reduce(lambda x,y: fabs(x)+fabs(y),rows[x]) - fabs(D[x]) 
-			true_rows.append(res)
-		return all(true_rows)
+         """ Chequea si A es diagonalmente dominante """
+         rows = A.tolist()
+         for x, Dx in enumerate(diag(A)):
+             if not 2*fabs(Dx) >= sum(fabs(y) for y in rows[x]):
+                return False 
+         return True
 
 	
 	def solve_precision(self,X0,epsilon):
@@ -98,12 +94,7 @@ class Gauss_Seidel(object):
 			print "Iteracion numero:", iterations, "valores:", [str(x[0]) for x in X1.tolist()]
 
 			if self.__norm2(X1-X0) < epsilon:
-				print
-				print "Se necesitaron", iterations, "iteraciones para llegar a la precision deseada"
-				print
-				print "Valores obtenidos:", [str(x[0]) for x in X1.tolist()]
-				print
-				return X1
+				return (X1, iterations)
 
 			X0 = X1
 			iterations +=1
@@ -111,10 +102,9 @@ class Gauss_Seidel(object):
 
 
 	def __norm2(self, X):
-		""" Calcula la norma 2 del vector dado """
-		vectorX = [x for row in X.tolist() for x in row]
-		squared_norm = sum(map(lambda x: x**2, vectorX))
-		return squared_norm**0.5
+         """ Calcula la norma 2 del vector dado """
+         squared_norm = sum([x**2 for row in X.tolist() for x in row] )
+         return squared_norm**0.5
 
 
 
