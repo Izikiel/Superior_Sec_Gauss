@@ -20,9 +20,7 @@ class Gauss_Seidel(object):
 			raise Exception("La matriz B no es columna de la dimension de A")
 
 		if  not self.__check_Diag_Dom(A):
-			A = self.__get_Diag_Dom(A)
-			if A is None:
-				raise NotDiagDomException
+			A = self.__transform_into_DiagDom(A)
 
 		D_L = tril(A)
 		U = -triu(A,k=1)
@@ -37,34 +35,34 @@ class Gauss_Seidel(object):
 	def __solve(self, X):
 		return (self.Tgs * self.__trunc(X) + self.Cgs)
 
-	def __transform_into_DiagDom(self,mat,permutar_columnas):
-		n = mat.shape[0]
-		row = 0
-		cant_max_permutaciones = factorial(n)
-		while(  cant_max_permutaciones > 0 and not self.__check_Diag_Dom(mat)):
-			if(permutar_columnas):
-				mat = mat.T
-			mat[row], mat[row+1] = mat[row+1].tolist(), mat[row].tolist()
-			if(row+2 <= n-1):
-				row = row + 1
-			else: 
-				row = 0
-			if(permutar_columnas):
-				mat = mat.T
-			cant_max_permutaciones = cant_max_permutaciones - 1
-		return mat
+	def __transform_into_DiagDom(self,mat):
+		"""Transforma mat en una matriz diagonalmente dominante, si no lo logra, lanza NotDiagDomException"""
+		max_indexes = []
+
+		for row in mat.tolist():
+			index = self.__get_Max_Index_In_Row(row)
+			if index not in max_indexes:
+				max_indexes.append(index)
+			else:
+				raise NotDiagDomException
+
+		diag_mat = mat.copy()
+		for pos,index in enumerate(max_indexes):
+			diag_mat[index] = mat[pos].tolist()
+
+		return diag_mat
 
 
-	def __get_Diag_Dom(self,mat):
-		""" Consiguea a partir de mat una matriz diagonalmente dominante """
-		self.__transform_into_DiagDom(mat,False)	#permuta filas
-		if(self.__check_Diag_Dom(mat)):
-			return mat
-		else:
-			self.__transform_into_DiagDom(mat,True)	#permuta columnas
-		if(self.__check_Diag_Dom(mat)):	
-			return mat
-		else: return None
+
+	def __get_Max_Index_In_Row(self,row):
+		abs_row = map(fabs,row)
+
+		try:
+			max_element_index = [(2*x >= sum(y for y in abs_row)) for x in abs_row].index(True)
+		except ValueError:
+			raise NotDiagDomException
+
+		return max_element_index
 
 	def __trunc(self, X):
 		""" Trunca todos los elementos de la matriz a la precision deseada"""
